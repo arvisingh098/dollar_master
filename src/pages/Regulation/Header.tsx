@@ -43,13 +43,53 @@ const RegulationHeader = ({
   totalCouponsUnderlying,
   couponPremium,
 }: RegulationHeaderProps) => {
-  const daoTotalSupply = totalBonded.plus(totalStaged).plus(totalRedeemable);
+  totalBonded = totalBonded ? totalBonded : new BigNumber(0);
+  const daoTotalSupply = totalStaged && totalRedeemable ? totalBonded.plus(totalStaged).plus(totalRedeemable) : new BigNumber(0);
   const poolTotalSupply = poolLiquidity.plus(poolRewarded).plus(poolClaimable);
   const legacyPoolTotalSupply = legacyPoolRewarded.plus(legacyPoolClaimable);
   const circulatingSupply = totalSupply
     .minus(daoTotalSupply)
     .minus(poolTotalSupply)
     .minus(legacyPoolTotalSupply);
+
+    let daoSupply: any = +ownership(daoTotalSupply, totalSupply).toNumber().toFixed(2);
+    daoSupply = daoSupply && daoSupply > 0 ? daoSupply : "0.00";
+
+    let uniSupply: any = +ownership(poolTotalSupply, totalSupply).toNumber().toFixed(2);
+    uniSupply = uniSupply && uniSupply > 0 ? uniSupply : "0.00";
+
+    let cirSupply: any = +ownership(circulatingSupply, totalSupply).toNumber().toFixed(2);
+    cirSupply = cirSupply && cirSupply > 0 ? cirSupply : "0.00";
+
+    let bondPercent: any = +ownership(totalBonded, daoTotalSupply)
+              .toNumber()
+              .toFixed(2);
+    bondPercent = bondPercent > 0 ? bondPercent : "0.00";
+
+    let stagePercent: any = +ownership(totalStaged, daoTotalSupply)
+              .toNumber()
+              .toFixed(2);
+    stagePercent = stagePercent > 0 ? stagePercent : "0.00";
+
+    let redeemPercent: any = +ownership(totalRedeemable, daoTotalSupply)
+              .toNumber()
+              .toFixed(2);
+    redeemPercent = redeemPercent > 0 ? redeemPercent : "0.00";
+
+    let liqPercent: any = +ownership(poolLiquidity, poolTotalSupply)
+              .toNumber()
+              .toFixed(2);
+    liqPercent = liqPercent > 0 ? liqPercent : "0.00";
+
+    let rewPercent: any = +ownership(poolRewarded, poolTotalSupply)
+              .toNumber()
+              .toFixed(2);
+    rewPercent = rewPercent > 0 ? rewPercent : "0.00";
+
+    let claimPercent: any = +ownership(poolClaimable, poolTotalSupply)
+              .toNumber()
+              .toFixed(2);
+    claimPercent = claimPercent > 0 ? claimPercent : "0.00";
 
   return (
     <div className="Header">
@@ -59,21 +99,15 @@ const RegulationHeader = ({
         items={[
           {
             item: "DAO",
-            percentage: +ownership(daoTotalSupply, totalSupply)
-              .toNumber()
-              .toFixed(2),
+            percentage: daoSupply,
           },
           {
             item: "Uniswap",
-            percentage: +ownership(poolTotalSupply, totalSupply)
-              .toNumber()
-              .toFixed(2),
+            percentage: uniSupply,
           },
           {
             item: "Circulating",
-            percentage: +ownership(circulatingSupply, totalSupply)
-              .toNumber()
-              .toFixed(2),
+            percentage: cirSupply,
           },
         ]}
       ></Distribution>
@@ -83,21 +117,15 @@ const RegulationHeader = ({
         items={[
           {
             item: "Bonded",
-            percentage: +ownership(totalBonded, daoTotalSupply)
-              .toNumber()
-              .toFixed(2),
+            percentage: bondPercent,
           },
           {
             item: "Staged",
-            percentage: +ownership(totalStaged, daoTotalSupply)
-              .toNumber()
-              .toFixed(2),
+            percentage: stagePercent,
           },
           {
             item: "Redeemable",
-            percentage: +ownership(totalRedeemable, daoTotalSupply)
-              .toNumber()
-              .toFixed(2),
+            percentage: redeemPercent,
           },
         ]}
       ></Distribution>
@@ -107,21 +135,15 @@ const RegulationHeader = ({
         items={[
           {
             item: "Liquidity",
-            percentage: +ownership(poolLiquidity, poolTotalSupply)
-              .toNumber()
-              .toFixed(2),
+            percentage: liqPercent,
           },
           {
             item: "Rewarded",
-            percentage: +ownership(poolRewarded, poolTotalSupply)
-              .toNumber()
-              .toFixed(2),
+            percentage: rewPercent,
           },
           {
             item: "Claimable",
-            percentage: +ownership(poolClaimable, poolTotalSupply)
-              .toNumber()
-              .toFixed(2),
+            percentage: claimPercent,
           },
         ]}
       ></Distribution>

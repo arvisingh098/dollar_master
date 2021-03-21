@@ -27,6 +27,8 @@ export const updateModalMode = async (theme) => {
 export const connect = async (ethereum) => {
   window.web3 = new Web3(window.ethereum);
   let addresses = await window.web3.eth.getAccounts();
+  let netId = await window.web3.eth.net.getId();
+  
   if (!addresses.length) {
     try {
       addresses = await window.ethereum.enable();
@@ -35,6 +37,8 @@ export const connect = async (ethereum) => {
       return false;
     }
   }
+  if(!(netId === 42 || netId === 1))
+    return false;
 
   return addresses.length ? addresses[0].toLowerCase() : null;
 };
@@ -418,3 +422,7 @@ export const providePool = async (pool, amount, callback) => {
       callback(hash);
     });
 };
+
+window.ethereum.on('networkChanged', function (networkId) {
+  window.location.reload();
+})
